@@ -102,17 +102,25 @@ def extract_data(num):
 
     return results
 
-# # extract json
-# def extract_json(results_list):
-#     with open('results.json', 'w') as outfile:
-#         json.dump(data, outfile)
-#
-#     #reading from json file
-#     with open('results.json') as json_file:
-#         data = json.load(json_file)
-#     #print to csv
-#     df = pd.DataFrame(data)
-#     df.to_csv('results.csv', index=False)
+# extract json
+def extract_json(results_list):
+    with open('results.json', 'w') as outfile:
+        json.dump(results_list, outfile)
+    return results_list
+
+    #reading from json file
+def load_data():
+    with open('results.json') as json_file:
+        url = json.load(json_file)
+
+
+def output(datas:list):
+    for i in datas:
+        print(i)
+    #print to csv
+def generate_data(results):
+    df = pd.DataFrame(results)
+    df.to_csv('results.csv', index=False)
 
 def run():
     results = []
@@ -127,3 +135,6 @@ def run():
 
 if __name__ == '__main__':
   run()
+  final_data = get_all_items(url)
+  generate_data(final_data)
+  output(final_data)
