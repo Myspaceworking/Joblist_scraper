@@ -113,14 +113,19 @@ def extract_data(num):
 
 # extract json
 def extract_json():
-   files = sorted(glob.glob("json_data/*.json"))
-   for file in files:
-       print(file)
+    results = []
+    files = sorted(glob.glob("json_data/*.json"))
+    for file in files:
+       with open(file) as json_file:
+           datas = json.load(json_file)
+       results += datas
+    generate_data(results)
 
 
 def generate_data(results_list):
     df = pd.DataFrame(results_list)
     df.to_csv('results.csv', index=False)
+    df.to_excel('results.xlsx', index=False)
 
 def run():
     results = []
