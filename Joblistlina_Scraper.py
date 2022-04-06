@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import glob
 import pandas as pd
 from bs4 import BeautifulSoup
 
@@ -76,7 +77,6 @@ def get_detail( url):
     f.write(r.text)
     f.close()
 
-    contents = soup.find_all('div', attrs={'class': 'sx2jih0 zcydq86q zcydq86v zcydq86w'})
 
     try:
         contents = soup.find("div", attrs={'class': 'sx2jih0'}).find('ul').find_all('li')
@@ -100,26 +100,26 @@ def extract_data(num):
         item['qualified'] = qualified
         results.append(item)
 
+    try:
+        os.mkdir("json_data")
+    except FileExistsError:
+        pass
+    with open("json_data/jobs_page_{}.json".format(num), 'w+') as json_file:
+        json.dump(results, json_file)
+
+    print("Json Data for page {} writted".format(num))
+
     return results
 
 # extract json
-def extract_json(results_list):
-    with open('results.json', 'w') as outfile:
-        json.dump(results_list, outfile)
-    return results_list
-
-    #reading from json file
-def load_data():
-    with open('results.json') as json_file:
-        url = json.load(json_file)
+def extract_json():
+   files = sorted(glob.glob("json_data/*.json"))
+   for file in files:
+       print(file)
 
 
-def output(datas:list):
-    for i in datas:
-        print(i)
-    #print to csv
-def generate_data(results):
-    df = pd.DataFrame(results)
+def generate_data(results_list):
+    df = pd.DataFrame(results_list)
     df.to_csv('results.csv', index=False)
 
 def run():
@@ -131,10 +131,9 @@ def run():
         extract = extract_data(num=page)
         results += extract
 
+    # creating report
+    generate_data(results)
 
 
 if __name__ == '__main__':
-  run()
-  final_data = get_all_items(url)
-  generate_data(final_data)
-  output(final_data)
+  extract_json()
